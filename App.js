@@ -34,6 +34,7 @@ export default class App extends Component<Props> {
           component={Home}
           title="Home"
           rightTitle=" Sign Out"
+          tintColor='black'
           renderBackButton={()=>(null)}
           onRight={() => Actions.signin()}
         />

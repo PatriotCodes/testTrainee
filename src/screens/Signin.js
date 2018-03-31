@@ -17,35 +17,35 @@ const User = t.struct({
 });
 const Dimensions = require('Dimensions');
 const window = Dimensions.get('window');
-const formStyles = {
-  ...Form.stylesheet,
-  formGroup: {
-    normal: {
-      marginBottom: 10,
-    },
-  },
-  controlLabel: {
-    error: {
-      color: 'red',
-      fontSize: 18,
-      marginBottom: 7,
-      fontWeight: '600',
-    },
-  },
-};
+
+var _ = require('lodash');
+const stylesheet = _.cloneDeep(t.form.Form.stylesheet);
+stylesheet.textbox.normal.borderWidth = 0;
+stylesheet.textbox.error.borderWidth = 0;
+stylesheet.textbox.normal.marginBottom = 0;
+stylesheet.textbox.error.marginBottom = 0;
+stylesheet.textboxView.normal.borderWidth = 0;
+stylesheet.textboxView.error.borderWidth = 0;
+stylesheet.textboxView.normal.borderRadius = 0;
+stylesheet.textboxView.error.borderRadius = 0;
+stylesheet.textboxView.normal.borderBottomWidth = 1;
+stylesheet.textboxView.error.borderBottomWidth = 1;
+stylesheet.textbox.normal.marginBottom = 5;
+stylesheet.textbox.error.marginBottom = 5;
+
 const options = {
   order: ['email','password'],
   fields: {
     email: {
-      placeholder: 'email@mail.com',
+      placeholder: 'Email',
       error: 'enter a valid email',
     },
     password: {
-      placeholder: '******',
+      placeholder: 'Password',
       error: 'enter a valid password',
     },
   },
-  stylesheet: formStyles,
+  stylesheet: stylesheet,
 };
 
 const styles = StyleSheet.create({
