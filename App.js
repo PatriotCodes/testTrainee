@@ -14,10 +14,6 @@ import Home from './src/screens/Home';
 type Props = {};
 export default class App extends Component<Props> {
 
-  state = {
-    isLoggedIn: false
-  }
-
   render() {
     return(
     <Router>

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import t from 'tcomb-form-native';
 import { Actions } from 'react-native-router-flux';
+import SQLite from 'react-native-sqlite-storage';
 
 const Form = t.form.Form;
 const User = t.struct({
@@ -68,11 +69,38 @@ const styles = StyleSheet.create({
 
 type Props = {};
 export default class Signin extends Component<Props> {
+    openCB() {
+        this.state.progress.push("Database OPEN");
+        this.setState(this.state);
+    }
+
+    errorCB(err) {
+        console.log("error: ",err);
+        this.state.progress.push("Error: "+ (err.message || err));
+        this.setState(this.state);
+        return false;
+    }
+
+  state = {
+    isLoggedIn: false
+  }
+
+  db = SQLite.openDatabase({name : "test", createFromLocation : "~database/test.sqlite"}, this.openCB, this.errorCB);
+
+  queryEmployees(tx) {
+        console.log("Executing sql...");
+        tx.executeSql('SELECT a.name, b.name as deptName FROM Employees a, Departments b WHERE a.department = b.department_id and a.department=?', [3], 
+            this.queryEmployeesSuccess,this.errorCB);
+        //tx.executeSql('SELECT a.name, from TEST', [],() => {},this.errorCB);
+    }
+
   handleSubmit = () => {
     const value = this._form.getValue();
     console.log('value: ',value);
+
     Actions.gray()
   }
+
   render() {
     return (
       <View style={{flex: 1,backgroundColor: '#ffffff'}}>
