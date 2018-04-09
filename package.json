@@ -7,9 +7,11 @@
     "test": "jest"
   },
   "dependencies": {
+    "npm": "^5.8.0",
     "react": "16.3.0-alpha.1",
     "react-native": "0.54.4",
     "react-native-router-flux": "^4.0.0-beta.28",
+    "react-native-sqlite-storage": "^3.3.4",
     "tcomb-form-native": "^0.6.11"
   },
   "devDependencies": {
