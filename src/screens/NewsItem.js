@@ -4,11 +4,8 @@ import {
     Text,
     View,
     Modal,
-    ActivityIndicator,
-    CheckBox,
-    TouchableHighlight,
+    ActivityIndicator
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
 
 const styles = StyleSheet.create({
     container: {
@@ -22,12 +19,15 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         padding: 10,
         marginBottom: 5,
-        flexDirection: 'row',
     },
     newsTitle: {
-        fontSize: 14,
+        fontSize: 20,
         color: '#000000',
-        marginTop: 6,
+    },
+    newsText: {
+        fontSize: 16,
+        color: '#000000',
+        marginTop: 10,
     },
     modalBackground: {
         flex: 1,
@@ -44,55 +44,46 @@ const styles = StyleSheet.create({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-around'
-    },
-    checkBox: {
-        marginLeft: 'auto'
-    },
-    newsHighlight: {
-        alignSelf: 'stretch'
     }
 });
 
-export default class Home extends Component<Props> {
+export default class NewsItem extends Component<Props> {
 
     constructor(props) {
         super(props);
         this.state = {
             loading: true,
-            news: null
+            news: null,
+            id: props.id
         };
         this.loadNews().then(response => {
                 this.setState({loading: false});
                 this.setState({news: response});
+                console.log(response);
+                console.log(this.state.id);
             }
         );
     }
 
     loadNews = async () => {
-        const response = await fetch('https://vast-falls-89340.herokuapp.com/news.php');
+        const response = await fetch('https://vast-falls-89340.herokuapp.com/news.php', {
+            method: 'POST',
+            body: JSON.stringify({
+                id: this.state.id,
+            })
+        });
         return await response.json();
     };
 
-    onPress = (id) => {
-        Actions.newsItem({id: id});
-    };
-
     render() {
-        if (this.state.news) {
+        if (this.state.news)
+        {
             return (
                 <View style={styles.container}>
-                    {this.state.news.map((prop) => {
-                        return (
-                            <TouchableHighlight style={styles.newsHighlight} key={prop.id}
-                                                underlayColor='black' onPress={() => this.onPress(prop.id)}>
-                                <View style={styles.newsItem}>
-                                    <Text style={styles.newsTitle}>{prop.title}</Text>
-                                    <CheckBox style={styles.checkBox}/>
-                                </View>
-                            </TouchableHighlight>
-                        );
-                    })
-                    }
+                    <View style={styles.newsItem}>
+                        <Text style={styles.newsTitle}>{this.state.news.title}</Text>
+                        <Text style={styles.newsText}>{this.state.news.text}</Text>
+                    </View>
                 </View>
             );
         } else {
