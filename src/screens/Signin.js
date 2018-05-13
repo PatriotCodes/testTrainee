@@ -5,49 +5,42 @@ import {
     View,
     TouchableOpacity,
     Modal,
-    ActivityIndicator
+    ActivityIndicator,
+    TextInput
 } from 'react-native';
 import t from 'tcomb-form-native';
 import {Actions} from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const Form = t.form.Form;
 const User = t.struct({
     email: t.String,
     password: t.String,
 });
-const Dimensions = require('Dimensions');
-const window = Dimensions.get('window');
 
-const _ = require('lodash');
-const stylesheet = _.cloneDeep(t.form.Form.stylesheet);
-stylesheet.textbox.normal.borderWidth = 0;
-stylesheet.textbox.error.borderWidth = 0;
-stylesheet.textbox.normal.marginBottom = 0;
-stylesheet.textbox.error.marginBottom = 0;
-stylesheet.textboxView.normal.borderWidth = 0;
-stylesheet.textboxView.error.borderWidth = 0;
-stylesheet.textboxView.normal.borderRadius = 0;
-stylesheet.textboxView.error.borderRadius = 0;
-stylesheet.textboxView.normal.borderBottomWidth = 1;
-stylesheet.textboxView.error.borderBottomWidth = 1;
-stylesheet.textbox.normal.marginBottom = 5;
-stylesheet.textbox.error.marginBottom = 5;
-stylesheet.textboxView.normal.borderColor = '#d1d1d1';
+this.state = {
+    val: ''
+};
 
 const options = {
-    auto: 'none',
     order: ['email', 'password'],
     fields: {
         email: {
             placeholder: 'E-Mail',
             error: 'enter a valid email',
+            template: inputTemplate,
+            config: {icon: 'ios-mail-outline'}
         },
         password: {
             placeholder: 'Password',
             error: 'enter a valid password',
+            template: inputTemplate,
+            config: {icon: 'ios-lock-outline'},
+            password: true,
+            secureTextEntry: true
         },
     },
-    stylesheet: stylesheet,
+    // stylesheet: stylesheet,
 };
 
 const styles = StyleSheet.create({
@@ -84,9 +77,66 @@ const styles = StyleSheet.create({
     },
     signInError: {
         color: '#AB433F',
-        fontSize: 17,
-    }
+        fontSize: 16,
+    },
+    searchSection: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#fff',
+    },
+    searchIcon: {
+        padding: 10,
+    },
+    input: {
+        flex: 1,
+        paddingTop: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
+        paddingLeft: 0,
+        backgroundColor: '#fff',
+        color: '#424242',
+    },
 });
+
+function inputTemplate(locals) {
+
+    const styles = StyleSheet.create({
+        itemContainer: {
+            flexDirection: 'row',
+        },
+        textInput: {
+            borderBottomWidth: 1,
+            borderColor: '#d1d1d1',
+            fontSize: 18,
+            flex: 1,
+            marginLeft: 10
+        },
+        errorText: {
+            fontSize: 18,
+            color: '#AB433F'
+        }
+    });
+
+    return (
+        <View>
+            {locals.error &&
+                <Text style={styles.errorText}>{locals.error.toString()}</Text>
+            }
+            <View style={styles.itemContainer}>
+                <Icon name={locals.config.icon} size={40}/>
+                <TextInput underlineColorAndroid='transparent' style={styles.textInput}
+                           placeholder={locals.placeholder}
+                           secureTextEntry={locals.secureTextEntry}
+                           onKeyPress={locals.onKeyPress}
+                           onChangeText={value => locals.onChange(value)}
+                           value={locals.value}/>
+            </View>
+        </View>
+    );
+
+}
 
 type Props = {};
 export default class Signin extends Component<Props> {
@@ -95,7 +145,11 @@ export default class Signin extends Component<Props> {
         super(props);
         this.state = {
             loading: false,
-            signInError: false
+            signInError: false,
+            value: {
+                email: '',
+                password: ''
+            }
         };
     }
 
@@ -113,8 +167,9 @@ export default class Signin extends Component<Props> {
     handleSubmit = async () => {
         this.setState({signInError: false});
         this.setState({loading: true});
-        const value = this._form.getValue();
+        const value = this.refs.form.getValue();
         if (value) {
+            console.log(value.email);
             const response = await this.signIn(value);
             this.setState({loading: false});
             if (response === 'success') {
@@ -126,17 +181,24 @@ export default class Signin extends Component<Props> {
         this.setState({loading: false});
     };
 
+    onChange(value) {
+        console.log(value);
+        this.setState({value: value});
+    };
+
     render() {
         return (
             <View style={{flex: 1, backgroundColor: '#ffffff'}}>
                 <View style={styles.container}>
-                    { this.state.signInError &&
+                    {this.state.signInError &&
                         <Text style={styles.signInError}>Email already registered!</Text>
                     }
                     <Form
-                        ref={c => this._form = c}
+                        ref="form"
                         type={User}
                         options={options}
+                        value={this.state.value}
+                        onChange={(e) => this.onChange(e)}
                     />
                 </View>
                 <View style={{alignItems: 'center'}}>
@@ -148,11 +210,13 @@ export default class Signin extends Component<Props> {
                     transparent={true}
                     animationType={'none'}
                     visible={this.state.loading}
-                    onRequestClose={() => {console.log('close modal')}}>
+                    onRequestClose={() => {
+                        console.log('close modal')
+                    }}>
                     <View style={styles.modalBackground}>
                         <View style={styles.activityIndicatorWrapper}>
                             <ActivityIndicator
-                                animating={this.state.loading} />
+                                animating={this.state.loading}/>
                         </View>
                     </View>
                 </Modal>
