@@ -6,7 +6,7 @@
 
 import React, {Component} from 'react';
 import {Router, Scene, Actions} from 'react-native-router-flux';
-import {AppRegistry} from 'react-native';
+import {AppRegistry, View} from 'react-native';
 
 import Signin from './src/screens/Signin';
 import Home from './src/screens/Home';
@@ -31,7 +31,7 @@ export default class App extends Component<Props> {
                            title="Home"
                            rightTitle=" Sign Out"
                            tintColor='black'
-                           renderBackButton={() => (null)}
+                           renderBackButton={() => <View/>}
                            onRight={() => Actions.signin()}
                     />
                     <Scene key="newsItem"

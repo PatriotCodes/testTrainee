@@ -13,9 +13,12 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const Form = t.form.Form;
+const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const emailType = t.refinement(t.String, function (email) { return emailRegex.test(email); });
+const passwordType = t.refinement(t.String, function (password) { return password.length >= 6; });
 const User = t.struct({
-    email: t.String,
-    password: t.String,
+    email: emailType,
+    password: passwordType,
 });
 
 this.state = {
@@ -33,14 +36,13 @@ const options = {
         },
         password: {
             placeholder: 'Password',
-            error: 'enter a valid password',
+            error: 'minimum length is 6 characters!',
             template: inputTemplate,
             config: {icon: 'ios-lock-outline'},
             password: true,
             secureTextEntry: true
         },
     },
-    // stylesheet: stylesheet,
 };
 
 const styles = StyleSheet.create({

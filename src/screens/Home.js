@@ -7,6 +7,7 @@ import {
     ActivityIndicator,
     CheckBox,
     TouchableHighlight,
+    ScrollView
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 
@@ -80,20 +81,22 @@ export default class Home extends Component<Props> {
     render() {
         if (this.state.news) {
             return (
-                <View style={styles.container}>
-                    {this.state.news.map((prop) => {
-                        return (
-                            <TouchableHighlight style={styles.newsHighlight} key={prop.id}
-                                                underlayColor='black' onPress={() => this.onPress(prop.id)}>
-                                <View style={styles.newsItem}>
-                                    <Text style={styles.newsTitle}>{prop.title}</Text>
-                                    <CheckBox style={styles.checkBox}/>
-                                </View>
-                            </TouchableHighlight>
-                        );
-                    })
-                    }
-                </View>
+                <ScrollView>
+                    <View style={styles.container}>
+                        {this.state.news.map((prop) => {
+                            return (
+                                <TouchableHighlight style={styles.newsHighlight} key={prop.id}
+                                                    underlayColor='black' onPress={() => this.onPress(prop.id)}>
+                                    <View style={styles.newsItem}>
+                                        <Text style={styles.newsTitle}>{prop.title}</Text>
+                                        <CheckBox style={styles.checkBox}/>
+                                    </View>
+                                </TouchableHighlight>
+                            );
+                        })
+                        }
+                    </View>
+                </ScrollView>
             );
         } else {
             return (
